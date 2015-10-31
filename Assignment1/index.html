@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Assignment 1</title>    
+
+<style>
+/* D.A.J. Hiep */
+/* Test-image id that centers the container on the screen. */
+	#test-image {
+		height: 0;
+		width: 0;
+		display: block;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+	}
+/* Image contained within the container, make it square and position the left most corner away from the center of the screen. */
+	#test-image img {
+		margin-left: -250px;
+		margin-top: -250px;
+		height: 500px;
+		width: 500px;
+	}
+/* Class rotating test-image 90 degrees. */
+	.test-image-turned {
+		-ms-transform: rotate(90deg); /* IE 9 */
+		-webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+		-moz-transform: rotate(90deg); /* Mozilla */
+		transform: rotate(90deg);
+	}
+</style>
+
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+// Function that gets called after DOM is loaded.
+	$(document).ready(function() {
+// Select image and store in a variable called variable.
+		var variable = $("#test-image img");
+// Function gets called on click.
+		$("#button").click(function() {
+			variable.toggleClass("test-image-turned");
+		});
+	});
+</script>
+</head>
+
+<body>
+	<section>
+    	<button id="button" type="button">Turn Picture</button>
+	</section>
+
+	<section id="test-image">
+		<img src="http://xiostorage.com/wp-content/uploads/2015/10/test.png" alt="test"/>    
+	</section>    
+</body>
+
+</html>
