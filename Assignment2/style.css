@@ -1,0 +1,46 @@
+/* D.A.J. Hiep */
+/* btn class that styles all buttons */
+.btn {
+	padding: 4px 20px 4px 20px;
+	border: dotted #000000 1px;
+}
+/* Test-image class that centers the container on the screen. */
+.test-image {
+	height: 0;
+	width: 0;
+	display: block;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+}
+/* Image contained within the container, make it square and position the left most corner away from the center of the screen. */
+.test-image img {
+	margin-left: -250px;
+	margin-top: -250px;
+	height: 500px;
+	width: 500px;
+}
+/* Class rotating test-image 90 degrees. */
+.test-image-turned-1 {
+	-o-transform: rotate(90deg);
+	-ms-transform: rotate(90deg); /* IE 9 */
+	-webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+	-moz-transform: rotate(90deg); /* Mozilla */
+	transform: rotate(90deg);
+}
+/* Class rotating test-image 180 degrees. */
+.test-image-turned-2 {
+	-o-transform: rotate(180deg);
+	-ms-transform: rotate(180deg); /* IE 9 */
+	-webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+	-moz-transform: rotate(180deg); /* Mozilla */
+	transform: rotate(180deg);
+}
+/* Class rotating test-image 270 degrees. */
+.test-image-turned-3 {
+	-o-transform: rotate(270deg);
+	-ms-transform: rotate(270deg); /* IE 9 */
+	-webkit-transform: rotate(270deg); /* Chrome, Safari, Opera */
+	-moz-transform: rotate(270deg); /* Mozilla */
+	transform: rotate(270deg);
+}
