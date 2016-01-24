@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Key events of European Union History Memorizer Game</title>
+<script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript">
+</script>
+<style>
+/* D.A.J. Hiep */
+body {
+  max-width: 60em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1em;
+}
+body.loading * {
+  display: none;
+}
+body .load-text {
+  display: none;
+}
+body.loading .load-text {
+  display: block;
+}
+.card {
+  border: 1pt solid black;
+}
+.card p {
+  margin: 0;
+  padding: 1em;
+}
+.card .answer {
+  padding-bottom: 0;
+}
+.card .question {
+  background-color: black;
+  color: white;
+}
+.card .buttons {
+  padding: 1em;
+}
+button {
+  width: 8em;
+}
+.correct span {
+  color: #0f0;
+}
+.wrong span {
+  color: #f00;
+}
+.hidden {
+  display: none;
+}
+.hidden2 {
+  visibility: hidden;
+}
+</style>
+<script>
+// D.A.J. Hiep
+// Globals constants (modulo after loading)
+var dates =   [1957, 1986, 1992];
+var events =  ["Verdrag van Rome", "Europese Akte", "Verdrag van Maastricht"];
+var answers = [false, false, false];
+var total = 3;
+
+// Global variables
+var i = -1;
+var visited = 0;
+
+var counter = 0;
+function synchronized_latch() {
+  counter++;
+  if (counter < 2) return;
+
+  function game_over() {
+    $(".card").addClass("hidden");
+    $(".gameover").removeClass("hidden");
+  }
+  function next_question() {
+    // Is game over?
+    var c = 0;
+    for (var j = 0; j < total; j++) {
+      if (answers[j]) c++;
+    }
+    if (c == total) {
+      game_over();
+      return;
+    }
+    // Find next card
+    do {
+      i = (i + 1) % total;
+    } while(answers[i]);
+    // Load question object
+    var question = events[i];
+    var answer = dates[i];
+    // Increase number of visited cards
+    visited++;
+    // Update "question here" text
+    $(".question").text(question);
+    // Update "answer here" text
+    $(".answer").text(answer);
+    // Hide answer, "Correct" and "Wrong" buttons
+    $(".answer").addClass("hidden2");
+    $(".correct, .wrong").addClass("hidden");
+    $(".show").removeClass("hidden2");
+    // Again update the score, to update current card number
+    update_score();
+  }
+  function show_answer() {
+    $(".answer").removeClass("hidden2");
+    $(".correct, .wrong").removeClass("hidden");
+    $(".show").addClass("hidden2");
+  }
+  function update_score() {
+    var m = Math.max(visited, total);
+    $(".data-total").text(total);
+    $(".data-visited").text(m);
+    $(".data-current").text(visited);
+    var c = 0;
+    for (var j = 0; j < total; j++) if (answers[j]) c++;
+    $(".data-score").text((c / m * 100).toFixed());
+  }
+  function update_correct_score() {
+    answers[i] = true;
+    update_score();
+  }
+  function update_wrong_score() {
+    update_score();
+  }
+  
+  // For button "show", add click listener
+  $(".show").click(show_answer);
+  // Update score
+  $(".correct").click(update_correct_score);
+  $(".wrong").click(update_wrong_score);
+  // For button "correct" and "wrong", add click listener
+  $(".correct, .wrong").click(next_question);
+
+  // Initialize
+  next_question();
+  update_score();
+  // Finished loading, show UI
+  $("body").removeClass("loading");
+}
+
+// Only called after the DOM is ready.
+// We should also wait on the API too.
+$(document).ready(function() {
+  synchronized_latch();
+})
+
+// Load JSON from API call (see last script element in body)
+// We can not use AJAX due to missing CORS headers on API endpoint.
+function receive(json) {
+  var pages = json.query.pages;
+  var xml;
+  for (var key in pages) {
+    var page = pages[key];
+    xml = page.revisions[0].parsetree;
+  }
+  var lines = xml.split("\n");
+  lines.shift();
+  var collection = [];
+  for (var i = 0; i < lines.length; i++) {
+    var components = lines[i].split(' \u2013 '); // en dash (\u2013)
+    components[0] = components[0].substring(1);
+    components[1] = components[1].replace("</root>", "");
+    // Regular expression matches MediaWiki links
+    // See https://regex101.com/r/aM8pU9/1
+    components[1] = components[1].replace(
+      /\[\[([^|\]]*)(\|[^\]]*)?\]\]/g,
+      function(match, outer, inner) {
+        if (inner)
+          return inner.substring(1);
+        else
+          return outer;
+      });
+    collection.push(components);
+  }
+  // Shuffle the collection
+  // See http://bost.ocks.org/mike/shuffle/
+  shuffle(collection);
+  // Update globals before continuing...
+  dates = [];
+  events = [];
+  answers = [];
+  total = collection.length;
+  for (var i = 0; i < collection.length; i++) {
+    dates.push(collection[i][0]);
+    events.push(collection[i][1]);
+    answers.push(false);
+  }
+  
+  // And latch!
+  synchronized_latch();
+}
+
+function shuffle(array) {
+  var m = array.length, t, i;
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element
+    i = Math.floor(Math.random() * m--);
+    // And swap it with the current element
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
+}
+</script>
+</head>
+<body class="loading">
+<h1 class="load-text">Loading...</h1>
+<h1>Key Events in European Union History Memorizer Game</h1>
+<div class="gameover hidden">
+<h2>Congratulations, you have memorized all the key events in the history of the European Union!</h2>
+</div>
+<div class="card">
+<p class="question">Question here?</p>
+<p class="answer">Answer here</p>
+<div class="buttons">
+<button class="show">Show<br />answer</button>
+<button class="correct"><span>Correct</span><br />next question</button>
+<button class="wrong"><span>Wrong</span><br />next question</button>
+</div>
+</div>
+<div class="score">
+<p class="total">Total cards: <span class="data-total">10</span></p>
+<p class="current">Current card: <span class="data-current">1</span> out of <span class="data-visited">10</span></p>
+<p class="score">Score: <span class="data-score">0</span>%</p>
+</div>
+<script src="https://en.wikipedia.org/w/api.php?action=query&prop=revisions&format=json&rvprop=parsetree&rvsection=3&titles=Timeline_of_European_Union_history&callback=receive"></script>
+</body>
+</html>
